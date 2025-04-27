@@ -75,6 +75,8 @@ Unfortunately, we must deal with the session manually because React Router doesn
 
 Once we get the session, we must commit it to the response headers. This is important because it ensures the session is saved and the flash message is removed after it's read.
 
+## Displaying the flash message
+
 All we need to do now is pass the `flash` object to the layout component. Here's how you can do it:
 
 ```tsx
