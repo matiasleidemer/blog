@@ -1,0 +1,103 @@
+---
+title: "Flash messages in React Router"
+date: '2025-04-27'
+description: "How to implement Rails like flash messages in React Router"
+---
+
+Coming from a Rails background, I always found the flash messages to be a neat way to show temporary messages to users. Behind the scenes, Rails uses the browser's session to store the flash message, automatically removing it after it's read.
+
+In React apps, this is very easy to achieve when dealing with client-side components, but what about server-side routing/rendering? How do you show a flash message when the user is redirected to a different page?
+
+## Setting the flash message
+
+Let's assume your React Router app has a delete action that deletes a contact and redirects the user to the contacts list page.
+
+You can set the flash message in the session like this:
+
+```tsx
+// app/routes/destroy-contact.tsx
+
+import { redirect } from "react-router";
+import { deleteContact } from "../data";
+import { commitSession, getSession } from "../sessions.server";
+
+import type { Route } from "./+types/destroy-contact";
+
+export async function action({ params, request }: Route.ActionArgs) {
+  await deleteContact(params.contactId);
+
+  const session = await getSession(request.headers.get("Cookie"));
+  session.flash("notice", "Contact successfully deleted");
+
+  return redirect(`/`, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+}
+```
+
+I've grabbed the `sessions.server` file from the [React Router docs](https://reactrouter.com/explanation/sessions-and-cookies#using-sessions). The `getSession` function retrieves the session from the request, and the `commitSession` function saves it to the response headers.
+
+Notice how we use the `flash` method to set the message. This method will store the message in the session and remove it after it's read. You can find more about it in the [implementation code](https://github.com/remix-run/react-router/blob/a3e4b8ed875611637357647fcf862c2bc61f4e11/packages/react-router/lib/server-runtime/sessions.ts#L57-L64).
+
+## Reading the flash message
+
+Now that we have the flash message set in the session, we can read it on the new page. You can do this in an SSR page's `loader` function, ideally in your main layout. Here's how you can do it:
+
+```tsx
+// app/layouts/sidebar.tsx
+import { data } from "react-router";
+
+import { getContacts } from "../data";
+import { commitSession, getSession } from "../sessions.server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const contacts = await getContacts();
+
+  const session = await getSession(request.headers.get("Cookie"));
+  const notice = session.get("notice");
+  const error = session.get("error");
+  const flash = { notice, error };
+
+  return data(
+    { contacts, flash },
+    {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    }
+  );
+}
+```
+
+Unfortunately, we must deal with the session manually because React Router doesn't have a built-in way to handle flash messages. This means we have to set the cookie in the response headers every time we read the session.
+
+Once we get the session, we must commit it to the response headers. This is important because it ensures the session is saved and the flash message is removed after it's read.
+
+All we need to do now is pass the `flash` object to the layout component. Here's how you can do it:
+
+```tsx
+// app/layouts/sidebar.tsx
+export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
+  const { contacts, flash } = loaderData;
+
+  useEffect(() => {
+    if (flash.notice) {
+      toast.success(flash.notice);
+    } else if (flash.error) {
+      toast.error(flash.error);
+    }
+  }, [flash]);
+
+  return (
+    <div>Your component</div>
+  )
+}
+```
+
+I'm using shadcn/ui's `sonner` [component](https://ui.shadcn.com/docs/components/sonner) to show the flash message. You can use any other library or your own implementation. The `useEffect` is required to avoid the flash message being shown on every render.
+
+Here's how it looks in action:
+
+![Flash message in action](/static/gifs/flash-notification.gif)
