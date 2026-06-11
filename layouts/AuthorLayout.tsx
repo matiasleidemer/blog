@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import type { Authors } from 'contentlayer/generated'
-import SocialIcon from '@/components/social-icons'
 import Image from '@/components/Image'
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 }
 
 export default function AuthorLayout({ children, content }: Props) {
-  const { name, avatar, occupation, company, email, twitter, linkedin, github } = content
+  const { avatar } = content
 
   return (
     <>
@@ -26,7 +25,7 @@ export default function AuthorLayout({ children, content }: Props) {
               />
             )}
           </div>
-          <div className="prose prose-lg max-w-none pb-8 pt-8 dark:prose-invert xl:col-span-2">
+          <div className="prose prose-lg dark:prose-invert max-w-none pt-8 pb-8 xl:col-span-2">
             {children}
           </div>
         </div>
