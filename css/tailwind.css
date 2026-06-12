@@ -11,18 +11,19 @@
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   /* Colors */
-  /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
-  --color-primary-50: oklch(0.971 0.014 343.198);
-  --color-primary-100: oklch(0.948 0.028 342.258);
-  --color-primary-200: oklch(0.899 0.061 343.231);
-  --color-primary-300: oklch(0.823 0.12 346.018);
-  --color-primary-400: oklch(0.718 0.202 349.761);
-  --color-primary-500: oklch(0.656 0.241 354.308);
-  --color-primary-600: oklch(0.592 0.249 0.584);
-  --color-primary-700: oklch(0.525 0.223 3.958);
-  --color-primary-800: oklch(0.459 0.187 3.815);
-  --color-primary-900: oklch(0.408 0.153 2.432);
-  --color-primary-950: oklch(0.284 0.109 3.907);
+  /* Primary: Tailwind's rose scale — a ruby red, nod to the Ruby posts.
+     Values from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
+  --color-primary-50: oklch(0.969 0.015 12.422);
+  --color-primary-100: oklch(0.941 0.03 12.58);
+  --color-primary-200: oklch(0.892 0.058 10.001);
+  --color-primary-300: oklch(0.81 0.117 11.638);
+  --color-primary-400: oklch(0.712 0.194 13.428);
+  --color-primary-500: oklch(0.645 0.246 16.439);
+  --color-primary-600: oklch(0.586 0.253 17.585);
+  --color-primary-700: oklch(0.514 0.222 16.935);
+  --color-primary-800: oklch(0.455 0.188 13.697);
+  --color-primary-900: oklch(0.41 0.159 10.272);
+  --color-primary-950: oklch(0.271 0.105 12.094);
 
   --color-gray-50: oklch(0.985 0.002 247.839);
   --color-gray-100: oklch(0.967 0.003 264.542);
@@ -97,7 +98,7 @@
       font-weight: 600;
     }
     & :where(code):not(pre code) {
-      color: var(--color-indigo-500);
+      color: var(--color-primary-600);
     }
   }
 
@@ -110,6 +111,9 @@
       & code {
         color: var(--color-primary-400);
       }
+    }
+    & :where(code):not(pre code) {
+      color: var(--color-primary-400);
     }
     & :where(h1, h2, h3, h4, h5, h6) {
       color: var(--color-gray-100);
