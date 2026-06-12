@@ -66,6 +66,15 @@
     border-color: var(--color-gray-200, currentColor);
   }
 
+  /* Saturated rose vibrates against the near-black background, so in dark
+     mode each primary step resolves one step lighter (500 -> rose-400, etc.).
+     Components keep using the same primary-* classes in both modes. */
+  .dark {
+    --color-primary-400: oklch(0.81 0.117 11.638);
+    --color-primary-500: oklch(0.712 0.194 13.428);
+    --color-primary-600: oklch(0.645 0.246 16.439);
+  }
+
   a,
   button {
     outline-color: var(--color-primary-500);
@@ -97,8 +106,22 @@
     & h3 {
       font-weight: 600;
     }
+    /* Inline code: neutral chip so it reads as code, not as a link */
     & :where(code):not(pre code) {
-      color: var(--color-primary-600);
+      color: var(--color-gray-800);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-sm);
+      padding: 0.125rem 0.375rem;
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      &::before,
+      &::after {
+        content: none;
+      }
+      @variant dark {
+        color: var(--color-gray-400);
+        background-color: var(--color-gray-900);
+      }
     }
   }
 
@@ -111,9 +134,6 @@
       & code {
         color: var(--color-primary-400);
       }
-    }
-    & :where(code):not(pre code) {
-      color: var(--color-primary-400);
     }
     & :where(h1, h2, h3, h4, h5, h6) {
       color: var(--color-gray-100);
